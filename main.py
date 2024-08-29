@@ -7,7 +7,7 @@ from models import DatasetConfig
 from utils import extract_features, preprocess_text
 
 
-def sentiment_analysis():
+def simple_sentiment_analysis():
     nltk.download("punkt")
     nltk.download("punkt_tab")
     nltk.download("stopwords")
@@ -69,4 +69,4 @@ def sentiment_analysis():
 
 
 if __name__ == "__main__":
-    sentiment_analysis()
+    simple_sentiment_analysis()
