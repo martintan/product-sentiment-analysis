@@ -27,6 +27,14 @@ pip install --upgrade certifi
 python main.py
 ```
 
+## running tests
+
+this command should run all the tests in the `tests` directory.
+
+```bash
+pytest
+```
+
 ## dataset
 
 - `product_reviews_data.csv` - taken from Kaggle [Amazon Product Reviews](https://www.kaggle.com/datasets/yasserh/amazon-product-reviews-dataset) dataset.
