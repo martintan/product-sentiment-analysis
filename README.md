@@ -4,7 +4,14 @@
 
 ```bash
 python3 -m venv env
+
+# mac os
 source ./env/bin/activate
+# windows (cmd)
+.\env\Scripts\activate.bat
+# windows (powershell)
+.\env\Scripts\Activate.ps1
+
 pip install -r requirements.txt
 
 # you may need to download nltk data, which requires certificates
