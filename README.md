@@ -6,6 +6,12 @@
 python3 -m venv env
 source ./env/bin/activate
 pip install -r requirements.txt
+
+# you may need to download nltk data, which requires certificates
+# mac os (replace 3.x with your python version)
+"/Applications/Python 3.x/Install Certificates.command"
+# windows
+pip install --upgrade certifi
 ```
 
 ## running the application

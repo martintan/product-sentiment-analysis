@@ -1,7 +1,20 @@
+import re
+
 import pandas as pd
+import nltk
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+from nltk.tokenize import word_tokenize
+
 from models import DatasetConfig
 
+
 def main():
+    nltk.download("punkt")
+    nltk.download("punkt_tab")
+    nltk.download("stopwords")
+    nltk.download("wordnet")
+
     # configure the dataset here
     config = DatasetConfig(
         csv_path="./product_reviews_data.csv",
@@ -21,7 +34,28 @@ def main():
         }
     )
 
+    df["processed_review_text"] = df["review_text"].apply(preprocess_text)
+
     print(df)
+
+
+def preprocess_text(text):
+    text = text.lower()
+    text = re.sub(r"[^a-zA-Z\s]", "", text)
+
+    # tokenize
+    tokens = word_tokenize(text)
+
+    # remove stop words
+    stop_words = set(stopwords.words("english"))
+    tokens = [token for token in tokens if token not in stop_words]
+
+    # lemmatize
+    lemmatizer = WordNetLemmatizer()
+    tokens = [lemmatizer.lemmatize(token) for token in tokens]
+
+    return " ".join(tokens)
+
 
 if __name__ == "__main__":
     main()
