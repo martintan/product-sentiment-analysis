@@ -64,7 +64,8 @@ My general idea of sentiment analysis is the following:
     - visualizations
     - csv output
 
-The bulk of the sentiment analysis logic was done just over an hour. 
+I timeboxed the sentiment analysis work to a maximum of 4 hours.
+The bulk of the sentiment analysis logic was done in just over an hour. 
 I spent another hour adding tests and doing manual checking.
 Additionally, around 30 minutes was spent refactoring and modularizing code.
 
