@@ -7,4 +7,5 @@ class DatasetConfig:
     csv_path: str
     review_text_column: str
     rating_column: str
+    output_csv_path: str
     max_rows: int = 100

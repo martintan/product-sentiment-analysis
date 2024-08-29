@@ -22,6 +22,7 @@ def main():
         review_text_column="reviews.text",
         rating_column="reviews.rating",
         max_rows=100,
+        output_csv_path="output.csv"
     )
 
     df = pd.read_csv(config.csv_path, nrows=config.max_rows)
@@ -39,16 +40,28 @@ def main():
     df["processed_review_text"] = df["review_text"].apply(preprocess_text)
 
     # sentiment analysis
-    df["sentiment"] = df["processed_review_text"].apply(
+    df["sentiment_score"] = df["processed_review_text"].apply(
         lambda x: TextBlob(x).sentiment.polarity
     )
-    df["sentiment_category"] = pd.cut(
-        df["sentiment"],
+    df["sentiment"] = pd.cut(
+        df["sentiment_score"],
         bins=[-1, -0.1, 0.1, 1],
         labels=["Negative", "Neutral", "Positive"],
     )
 
-    visualize(df)
+    # visualize(df)
+
+    # display summary
+    sentiment_summary = df['sentiment'].value_counts().to_dict()
+    print("Results:")
+    for category, count in sentiment_summary.items():
+        print(f"\t{category}: {count}")
+
+    # reorder columns for readability
+    reordered_columns = ['rating', 'sentiment', 'sentiment_score'] + [col for col in df.columns if col not in ['rating', 'sentiment', 'sentiment_score']]
+    # save processed data to csv
+    df[reordered_columns].to_csv(config.output_csv_path, index=False)
+    print(f"Output saved to: {config.output_csv_path}")
 
 
 def preprocess_text(text):
@@ -74,7 +87,7 @@ def visualize(df):
     import matplotlib.pyplot as plt
 
     # diagram 1: sentiment analysis results (bar plot)
-    sentiment_counts = df['sentiment_category'].value_counts()
+    sentiment_counts = df['sentiment'].value_counts()
     plt.figure(figsize=(10, 6))
     sentiment_counts.plot(kind='bar')
     plt.title('sentiment analysis results')
@@ -85,10 +98,10 @@ def visualize(df):
 
     # diagram 2: sentiment vs. rating (scatter plot)
     plt.figure(figsize=(10, 6))
-    plt.scatter(df['rating'], df['sentiment'])
+    plt.scatter(df['rating'], df['sentiment_score'])
     plt.title('sentiment vs. rating')
     plt.xlabel('rating')
-    plt.ylabel('sentiment')
+    plt.ylabel('sentiment score')
     plt.tight_layout()
     plt.show()
 
