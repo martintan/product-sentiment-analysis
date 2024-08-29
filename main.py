@@ -1,5 +1,6 @@
-import pandas as pd
+import json
 import nltk
+import pandas as pd
 from textblob import TextBlob
 
 from models import DatasetConfig
@@ -73,7 +74,8 @@ if __name__ == "__main__":
     df = preprocess_reviews(df)
     df = basic_sentiment_analysis(df)
 
-    extract_features(df)
+    extracted_features = extract_features(df)
+    print(json.dumps(extracted_features, indent=4))
 
     # optional step just for visualizing
     # from utils import visualize

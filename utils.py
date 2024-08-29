@@ -87,6 +87,7 @@ def visualize(df: pd.DataFrame):
 Extract top keywords & phrases from the dataset.
 
 @param df: the dataframe containing the dataset
+@return: A dictionary containing the extracted features
 """
 
 
@@ -103,7 +104,11 @@ def extract_features(df: pd.DataFrame):
     def format_tokens(tokens, is_phrase=False):
         return [" ".join(token[0]) if is_phrase else token[0][0] for token in tokens]
 
-    print("Top positive keywords:", format_tokens(positive_keywords))
-    print("Top positive phrases:", format_tokens(positive_phrases, is_phrase=True))
-    print("Top negative keywords:", format_tokens(negative_keywords))
-    print("Top negative phrases:", format_tokens(negative_phrases, is_phrase=True))
+    extracted_features = {
+        "top_positive_keywords": format_tokens(positive_keywords),
+        "top_positive_phrases": format_tokens(positive_phrases, is_phrase=True),
+        "top_negative_keywords": format_tokens(negative_keywords),
+        "top_negative_phrases": format_tokens(negative_phrases, is_phrase=True)
+    }
+
+    return extracted_features
