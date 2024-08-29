@@ -6,23 +6,6 @@ from nltk.tokenize import word_tokenize
 from collections import Counter
 import pandas as pd
 
-"""
-Get the top tokens / n-grams from a text series.
-
-@param text_series: the text series to extract tokens from
-@param num_words: the number of words in the n-grams
-@param max_keywords: the maximum number of keywords to return
-"""
-
-
-def get_top_tokens(text_series: pd.Series, num_words: int, max_keywords: int = 10):
-    all_ngrams = [
-        gram for text in text_series for gram in ngrams(text.split(), num_words)
-    ]
-    return sorted(Counter(all_ngrams).items(), key=lambda x: x[1], reverse=True)[
-        :max_keywords
-    ]
-
 
 """
 Preprocess text by removing punctuation, stop words, and lemmatizing.
@@ -84,6 +67,24 @@ def visualize(df: pd.DataFrame):
 
 
 """
+Get the top tokens / n-grams from a text series.
+
+@param text_series: the text series to extract tokens from
+@param num_words: the number of words in the n-grams
+@param max_keywords: the maximum number of keywords to return
+"""
+
+
+def get_top_tokens(text_series: pd.Series, num_words: int, max_keywords: int = 10):
+    all_ngrams = [
+        gram for text in text_series for gram in ngrams(text.split(), num_words)
+    ]
+    return sorted(Counter(all_ngrams).items(), key=lambda x: x[1], reverse=True)[
+        :max_keywords
+    ]
+
+
+"""
 Extract top keywords & phrases from the dataset.
 
 @param df: the dataframe containing the dataset
@@ -104,11 +105,9 @@ def extract_features(df: pd.DataFrame):
     def format_tokens(tokens, is_phrase=False):
         return [" ".join(token[0]) if is_phrase else token[0][0] for token in tokens]
 
-    extracted_features = {
+    return {
         "top_positive_keywords": format_tokens(positive_keywords),
         "top_positive_phrases": format_tokens(positive_phrases, is_phrase=True),
         "top_negative_keywords": format_tokens(negative_keywords),
-        "top_negative_phrases": format_tokens(negative_phrases, is_phrase=True)
+        "top_negative_phrases": format_tokens(negative_phrases, is_phrase=True),
     }
-
-    return extracted_features

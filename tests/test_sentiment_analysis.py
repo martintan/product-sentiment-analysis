@@ -1,7 +1,6 @@
 import pandas as pd
 import pytest
-from main import basic_sentiment_analysis, preprocess_reviews
-
+from sentiment_analysis import SentimentAnalysis
 
 """
 I know this way of generating sample data is not ideal, but it's a quick way for testing.
@@ -27,34 +26,20 @@ def sample_data():
     ] * 5
 
     all_reviews = positive_reviews + negative_reviews
-    df = pd.DataFrame({"review_text": all_reviews, "rating": [5] * 25 + [1] * 25})
-    return df
+    return pd.DataFrame({"review_text": all_reviews, "rating": [5] * 25 + [1] * 25})
 
 
 def test_sentiment_analysis(sample_data):
-    df = preprocess_reviews(sample_data)
-    df = basic_sentiment_analysis(df)
+    sa = SentimentAnalysis(df=sample_data)
+    sa.preprocess_reviews()
+    sa.basic_sentiment_analysis()
 
-    # check if the sentiment analysis results match the expected outcomes
-    positive_count = df[df["sentiment"] == "Positive"].shape[0]
-    negative_count = df[df["sentiment"] == "Negative"].shape[0]
-    assert (
-        positive_count == 25
-    ), f"Expected 25 positive reviews, but got {positive_count}"
-    assert (
-        negative_count == 25
-    ), f"Expected 25 negative reviews, but got {negative_count}"
+    positive_count = sa.df[sa.df["sentiment"] == "Positive"].shape[0]
+    negative_count = sa.df[sa.df["sentiment"] == "Negative"].shape[0]
+    assert positive_count == 25, f"Expected 25 positive reviews, but got {positive_count}"
+    assert negative_count == 25, f"Expected 25 negative reviews, but got {negative_count}"
 
-    # check if the sentiment matches the rating
-    high_rating_positive = df[
-        (df["rating"] == 5) & (df["sentiment"] == "Positive")
-    ].shape[0]
-    low_rating_negative = df[
-        (df["rating"] == 1) & (df["sentiment"] == "Negative")
-    ].shape[0]
-    assert (
-        high_rating_positive == 25
-    ), f"Expected 25 high-rated positive reviews, but got {high_rating_positive}"
-    assert (
-        low_rating_negative == 25
-    ), f"Expected 25 low-rated negative reviews, but got {low_rating_negative}"
+    high_rating_positive = sa.df[(sa.df["rating"] == 5) & (sa.df["sentiment"] == "Positive")].shape[0]
+    low_rating_negative = sa.df[(sa.df["rating"] == 1) & (sa.df["sentiment"] == "Negative")].shape[0]
+    assert high_rating_positive == 25, f"Expected 25 high-rated positive reviews, but got {high_rating_positive}"
+    assert low_rating_negative == 25, f"Expected 25 low-rated negative reviews, but got {low_rating_negative}"

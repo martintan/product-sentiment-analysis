@@ -1,46 +1,61 @@
 import pandas as pd
 import pytest
+from sentiment_analysis import SentimentAnalysis
 from utils import extract_features, preprocess_text
 
 
 @pytest.fixture
 def sample_df():
-    data = {
-        "review_text": [
-            "This product is amazing and fantastic!",
-            "I love this item, it's great and awesome.",
-            "Terrible product, very disappointing.",
-            "Awful experience, would not recommend.",
-        ],
-        "rating": [5, 5, 1, 1],
+    return pd.DataFrame(
+        {
+            "review_text": [
+                "This product is amazing and fantastic!",
+                "I love this item, it's great and awesome.",
+                "Terrible product, very disappointing.",
+                "This product is a complete waste of money.",
+            ],
+            "rating": [5, 5, 1, 1],
+        }
+    )
+
+
+@pytest.fixture
+def expected_data():
+    return {
         "expected_positive_keywords": ["amazing", "fantastic", "great", "awesome"],
-        "expected_negative_keywords": ["terrible", "disappointing", "awful"],
+        "expected_negative_keywords": ["terrible", "disappointing", "waste"],
         "expected_positive_phrases": [
             "product amazing",
             "amazing fantastic",
             "great awesome",
         ],
-        "expected_negative_phrases": ["terrible product", "awful experience"],
+        "expected_negative_phrases": ["terrible product", "complete waste"],
     }
-    df = pd.DataFrame(data)
-    df["processed_review_text"] = df["review_text"].apply(preprocess_text)
-    df["sentiment"] = ["Positive", "Positive", "Negative", "Negative"]
-    return df
 
 
-def test_extract_features(sample_df):
-    features = extract_features(sample_df)
+@pytest.fixture
+def sentiment_analysis(sample_df):
+    sa = SentimentAnalysis(df=sample_df)
+    sa.preprocess_reviews()
+    sa.basic_sentiment_analysis()
+    return sa
 
-    for positive_keyword in sample_df["expected_positive_keywords"].iloc[0]:
+
+def test_extract_features(sentiment_analysis, expected_data):
+    features = extract_features(sentiment_analysis.df)
+
+    print(features)
+
+    for positive_keyword in expected_data["expected_positive_keywords"]:
         assert positive_keyword in features["top_positive_keywords"]
 
-    for negative_keyword in sample_df["expected_negative_keywords"].iloc[0]:
+    for negative_keyword in expected_data["expected_negative_keywords"]:
         assert negative_keyword in features["top_negative_keywords"]
 
     assert any(
         positive_phrase in " ".join(features["top_positive_phrases"])
-        for positive_phrase in sample_df["expected_positive_phrases"].iloc[0]
+        for positive_phrase in expected_data["expected_positive_phrases"]
     )
 
-    for negative_phrase in sample_df["expected_negative_phrases"].iloc[0]:
+    for negative_phrase in expected_data["expected_negative_phrases"]:
         assert negative_phrase in features["top_negative_phrases"]
